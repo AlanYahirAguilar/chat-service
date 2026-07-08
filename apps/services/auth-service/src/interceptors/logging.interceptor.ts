@@ -6,11 +6,11 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { CustomLoggerService } from '@syncslot/shared';
+import { CustomLoggerService } from '@chat-monorepo/shared';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  constructor(private readonly logger: CustomLoggerService) {}
+  constructor(private readonly logger: CustomLoggerService) { }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     if (context.getType() === 'http') {

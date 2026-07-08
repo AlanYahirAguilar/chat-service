@@ -1,11 +1,11 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
-import { LoginDto } from '@syncslot/shared';
+import { LoginDto } from '@chat-monorepo/shared';
 
 @Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @MessagePattern({ cmd: 'login' })
   async login(@Payload() loginDto: LoginDto) {

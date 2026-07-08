@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { stringConstants } from '@syncslot/shared';
+import { stringConstants } from '@chat-monorepo/shared';
 
 export class SqlException extends HttpException {
   constructor(exception: any) {

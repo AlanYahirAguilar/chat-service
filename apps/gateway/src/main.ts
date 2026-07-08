@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/exceptions/http.exception.filter';
 import { TransformInterceptor } from './interceptors/transform.interceptor';
-import { stringConstants } from '@syncslot/shared';
+import { stringConstants } from '@chat-monorepo/shared';
 import { CustomLoggerService } from './common/logger/logger.service';
 
 async function bootstrap() {

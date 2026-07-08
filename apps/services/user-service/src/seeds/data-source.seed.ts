@@ -12,4 +12,5 @@ export const SeedDataSource = new DataSource({
   entities: [__dirname + '/../modules/**/*.entity.{js,ts}'],
   synchronize: true,
   logging: false,
+  connectorPackage: 'mysql2',
 });

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Base } from '@syncslot/shared';
+import { Base } from '@chat-monorepo/shared';
 import { Column, Entity, Index, OneToMany, Relation } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { ContactEntity } from './contact.entity';

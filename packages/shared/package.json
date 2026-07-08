@@ -1,5 +1,5 @@
 {
-    "name": "@syncslot/shared",
+    "name": "@chat-monorepo/shared",
     "version": "1.0.0",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",

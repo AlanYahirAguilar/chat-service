@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import type { Relation } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Base } from '@syncslot/shared';
+import { Base } from '@chat-monorepo/shared';
 import { Privilege } from './privilege.entity';
 
 @Entity('module_sys')

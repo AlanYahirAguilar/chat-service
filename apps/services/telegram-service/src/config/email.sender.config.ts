@@ -2,7 +2,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
-import { stringConstants } from '@syncslot/shared';
+import { stringConstants } from '@chat-monorepo/shared';
 
 const mailConfig = (configService: ConfigService): MailerOptions => ({
   transport: {

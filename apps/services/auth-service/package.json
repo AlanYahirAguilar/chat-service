@@ -1,5 +1,5 @@
 {
-  "name": "syncslot-auth-service",
+  "name": "chat-monorepo-auth-service",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -12,7 +12,7 @@
     "start": "nest start",
     "db:create-dev": "ts-node -r dotenv/config src/scripts/create-db.ts",
     "db:create-prod": "node dist/scripts/create-db.js",
-    "prestart:dev": "npm run db:create-dev",
+    
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "db:init-prod": "npm run db:create-prod && npm run seed:prod",
@@ -116,5 +116,3 @@
     "testEnvironment": "node"
   }
 }
-
-

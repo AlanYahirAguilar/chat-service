@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Logger } from '@nestjs/common';
-import { stringConstants } from '@syncslot/shared';
+import { stringConstants } from '@chat-monorepo/shared';
 
 export class ValidationException extends HttpException {
   constructor(errorKeyOrMessage: string, info?: string) {

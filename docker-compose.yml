@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 x-common-env: &common-env
   NODE_OPTIONS: "--max-old-space-size=60"
@@ -14,15 +14,14 @@ x-common-env: &common-env
   WHATSAPP_SERVICE_HOST: "whatsapp-service"
 
 services:
-
   # --- MICROSERVICIOS DE DOMINIO ---
 
   user-service:
     build:
       context: .
       dockerfile: apps/services/user-service/Dockerfile
-    image: registry.rous-portal.online/service-syncslot-user-service:latest
-    container_name: syncslot-user-service
+    image: registry.rous-portal.online/service-chat-monorepo-user-service:latest
+    container_name: chat-monorepo-user-service
     env_file:
       - .env
     networks:
@@ -40,8 +39,8 @@ services:
     build:
       context: .
       dockerfile: apps/services/auth-service/Dockerfile
-    image: registry.rous-portal.online/service-syncslot-auth-service:latest
-    container_name: syncslot-auth-service
+    image: registry.rous-portal.online/service-chat-monorepo-auth-service:latest
+    container_name: chat-monorepo-auth-service
     env_file:
       - .env
     networks:
@@ -59,8 +58,8 @@ services:
     build:
       context: .
       dockerfile: apps/services/ia-service/Dockerfile
-    image: registry.rous-portal.online/service-syncslot-ia-service:latest
-    container_name: syncslot-ia-service
+    image: registry.rous-portal.online/service-chat-monorepo-ia-service:latest
+    container_name: chat-monorepo-ia-service
     env_file:
       - .env
     networks:
@@ -78,8 +77,8 @@ services:
     build:
       context: .
       dockerfile: apps/services/mail-service/Dockerfile
-    image: registry.rous-portal.online/service-syncslot-mail-service:latest
-    container_name: syncslot-mail-service
+    image: registry.rous-portal.online/service-chat-monorepo-mail-service:latest
+    container_name: chat-monorepo-mail-service
     env_file:
       - .env
     networks:
@@ -97,8 +96,8 @@ services:
     build:
       context: .
       dockerfile: apps/services/media-service/Dockerfile
-    image: registry.rous-portal.online/service-syncslot-media-service:latest
-    container_name: syncslot-media-service
+    image: registry.rous-portal.online/service-chat-monorepo-media-service:latest
+    container_name: chat-monorepo-media-service
     env_file:
       - .env
     networks:
@@ -116,8 +115,8 @@ services:
     build:
       context: .
       dockerfile: apps/services/payment-service/Dockerfile
-    image: registry.rous-portal.online/service-syncslot-payment-service:latest
-    container_name: syncslot-payment-service
+    image: registry.rous-portal.online/service-chat-monorepo-payment-service:latest
+    container_name: chat-monorepo-payment-service
     env_file:
       - .env
     depends_on:
@@ -137,8 +136,8 @@ services:
     build:
       context: .
       dockerfile: apps/services/redis-service/Dockerfile
-    image: registry.rous-portal.online/service-syncslot-redis-service:latest
-    container_name: syncslot-redis-service
+    image: registry.rous-portal.online/service-chat-monorepo-redis-service:latest
+    container_name: chat-monorepo-redis-service
     env_file:
       - .env
     networks:
@@ -156,8 +155,8 @@ services:
     build:
       context: .
       dockerfile: apps/services/report-service/Dockerfile
-    image: registry.rous-portal.online/service-syncslot-report-service:latest
-    container_name: syncslot-report-service
+    image: registry.rous-portal.online/service-chat-monorepo-report-service:latest
+    container_name: chat-monorepo-report-service
     env_file:
       - .env
     depends_on:
@@ -177,8 +176,8 @@ services:
     build:
       context: .
       dockerfile: apps/services/reservation-service/Dockerfile
-    image: registry.rous-portal.online/service-syncslot-reservation-service:latest
-    container_name: syncslot-reservation-service
+    image: registry.rous-portal.online/service-chat-monorepo-reservation-service:latest
+    container_name: chat-monorepo-reservation-service
     env_file:
       - .env
     networks:
@@ -196,8 +195,8 @@ services:
     build:
       context: .
       dockerfile: apps/services/whatsapp-service/Dockerfile
-    image: registry.rous-portal.online/service-syncslot-whatsapp-service:latest
-    container_name: syncslot-whatsapp-service
+    image: registry.rous-portal.online/service-chat-monorepo-whatsapp-service:latest
+    container_name: chat-monorepo-whatsapp-service
     env_file:
       - .env
     volumes:
@@ -219,8 +218,8 @@ services:
     build:
       context: .
       dockerfile: apps/gateway/Dockerfile
-    image: registry.rous-portal.online/service-syncslot-gateway:latest
-    container_name: syncslot-gateway
+    image: registry.rous-portal.online/service-chat-monorepo-gateway:latest
+    container_name: chat-monorepo-gateway
     env_file:
       - .env
     depends_on:

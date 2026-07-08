@@ -7,7 +7,7 @@ import {
   IsPhoneNumber,
   IsString,
 } from 'class-validator';
-import { CreateDto } from '@syncslot/shared';
+import { CreateDto } from '@chat-monorepo/shared';
 
 export class CreateUserDTO extends CreateDto {
   @ApiProperty({

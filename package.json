@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "npm-i": "npm cache clean --force && npm install --workspaces",
-        "dev": "npm run start:dev --workspaces",
+        "dev": "concurrently \"npm run start:dev -w apps/gateway\" \"npm run start:dev -w apps/services/auth-service\" \"npm run start:dev -w apps/services/ia-service\" \"npm run start:dev -w apps/services/user-service\" \"npm run start:dev -w apps/services/whatsapp-service\" \"npm run start:dev -w apps/services/mail-service\" \"npm run start:dev -w apps/services/telegram-service\" \"npm run start:dev -w apps/services/redis-service\"",
         "build": "npm run build --workspaces",
         "test": "npm run test --workspaces",
         "docker:up": "docker-compose up --build -d",
@@ -16,6 +16,7 @@
     "devDependencies": {
         "@swc/cli": "0.8.1",
         "@swc/core": "1.15.43",
+        "concurrently": "^10.0.3",
         "typescript": "5.7.3"
     },
     "workspaces": [
@@ -29,7 +30,11 @@
         "@nestjs/event-emitter": "3.1.0",
         "@nestjs/microservices": "11.0.1",
         "@nestjs/typeorm": "11.0.1",
+        "@types/bcryptjs": "^2.4.6",
+        "axios": "^1.18.1",
+        "bcryptjs": "^3.0.3",
         "mysql2": "^3.22.6",
+        "ts-node": "^10.9.2",
         "typeorm": "0.3.29"
     },
     "overrides": {

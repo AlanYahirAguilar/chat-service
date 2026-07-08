@@ -1,5 +1,5 @@
 {
-  "name": "syncslot-mail-service",
+  "name": "chat-monorepo-mail-service",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -115,4 +115,3 @@
     "testEnvironment": "node"
   }
 }
-

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
-import { CustomLoggerService } from '@syncslot/shared';
+import { CustomLoggerService } from '@chat-monorepo/shared';
 import { ContactEntity } from './entity/contact.entity';
 import { UserEntity } from './entity/user.entity';
 import { CreateContactDto } from './model/create.contact.dto';
@@ -16,7 +16,7 @@ export class ContactService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly logger: CustomLoggerService,
-  ) {}
+  ) { }
 
   async create(userId: bigint, dto: CreateContactDto): Promise<ContactEntity> {
     const user = await this.userRepository.findOne({ where: { id: userId } });

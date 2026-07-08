@@ -1,6 +1,6 @@
-import { CustomLoggerService } from '@syncslot/shared';
-import { generateRandomCode } from '@syncslot/shared';
-import { comparePasswords, hashPassword } from '@syncslot/shared';
+import { CustomLoggerService } from '@chat-monorepo/shared';
+import { generateRandomCode } from '@chat-monorepo/shared';
+import { comparePasswords, hashPassword } from '@chat-monorepo/shared';
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,7 +14,7 @@ import { ResetPasswordDTO } from './model/reset.password.dto';
 import { UpdateUserDTO } from './model/update.user.dto';
 import { UpdateProfileDto } from './model/update.profile.dto';
 import { UserProfileResponseDto } from './model/user.profile.response.dto';
-import { stringConstants } from '@syncslot/shared';
+import { stringConstants } from '@chat-monorepo/shared';
 const ROLE_WEIGHTS: Record<string, number> = {
   CLIENT: 1,
   OPERATOR: 2,
@@ -36,7 +36,7 @@ export class UserService {
     @Inject('WHATSAPP_SERVICE') private readonly whatsappClient: ClientProxy,
     @Inject('MAIL_SERVICE') private readonly mailClient: ClientProxy,
     @Inject('AUTH_SERVICE') private readonly authClient: ClientProxy,
-  ) {}
+  ) { }
 
   async findAll(page: number = 1, limit: number = 10) {
     try {

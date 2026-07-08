@@ -5,7 +5,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GenerateDescriptionDto } from './model/generate.description.dto';
 import { GenerateMessageDto } from './model/generate.message.dto';
-import { CustomLoggerService } from '@syncslot/shared';
+import { CustomLoggerService } from '@chat-monorepo/shared';
 @Injectable()
 export class IaService {
   private genAI: GoogleGenerativeAI;
@@ -53,7 +53,7 @@ export class IaService {
       const errorStack = error instanceof Error ? error.stack : '';
       this.logger.error(
         '[generateDescription] Error generando descripción con IA: ' +
-          errorMessage,
+        errorMessage,
         errorStack,
         'IA',
       );
@@ -81,9 +81,13 @@ export class IaService {
 
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`;
 
+      const signaturePrompt = dto.userName 
+        ? `\nAl final del mensaje, debes incluir obligatoriamente la firma: "— Mensaje enviado por ${dto.userName}${dto.userEmail ? ` (Correo: ${dto.userEmail}` : ''}${dto.userPhone ? `, Tel: ${dto.userPhone}` : ''}${dto.userEmail || dto.userPhone ? ')' : ''}".` 
+        : '';
+
       const systemPrompt = isMail
-        ? `Actúa como un asistente que redacta CORREOS ELECTRÓNICOS. A partir de la ORDEN del usuario (que solo expresa la intención), redacta un correo completo aplicando el TONO indicado. Devuelve EXCLUSIVAMENTE un objeto JSON válido con las claves "subject" (asunto breve y claro) y "body" (cuerpo del correo, sin la línea de asunto). No incluyas explicaciones ni markdown.\nORDEN: ${dto.prompt}\nTONO: ${dto.tone}`
-        : `Actúa como un asistente virtual redactando mensajes. Redacta el mensaje basándote en la ORDEN y aplica este TONO. Responde SOLO con el texto final, sin explicaciones ni saludos propios de la IA.\nORDEN: ${dto.prompt}\nTONO: ${dto.tone}`;
+        ? `Actúa como un asistente que redacta CORREOS ELECTRÓNICOS. A partir de la ORDEN del usuario, redacta un correo completo aplicando el TONO indicado. Devuelve EXCLUSIVAMENTE un objeto JSON válido con las claves "subject" (asunto breve y claro) y "body" (cuerpo del correo, sin la línea de asunto). No incluyas explicaciones ni markdown.\nORDEN: ${dto.prompt}\nTONO: ${dto.tone}${signaturePrompt}`
+        : `Actúa como un asistente virtual redactando mensajes. Redacta el mensaje basándote en la ORDEN y aplica este TONO. Responde SOLO con el texto final, sin explicaciones ni saludos propios de la IA.\nORDEN: ${dto.prompt}\nTONO: ${dto.tone}${signaturePrompt}`;
 
       const body: Record<string, unknown> = {
         contents: [{ parts: [{ text: systemPrompt }] }],
@@ -158,11 +162,39 @@ export class IaService {
       return { subject, body: bodyText };
     } catch {
       this.logger.error(
-        '[parseMailJson] No se pudo parsear el JSON del correo, usando texto plano.',
+        '[parseMailJson] No se pudo parsear el JSON del correo, intentando con regex.',
         undefined,
         'IA',
       );
-      return { subject: 'Nuevo mensaje', body: raw.trim() };
+      // Fallback: extraer de manera manual con regex
+      const subjectMatch = cleaned.match(/"subject"\s*:\s*"([^"]+)"/i);
+      // Extrae desde el inicio del body hasta la última comilla antes de la llave, o hasta el final si faltó la llave
+      const bodyMatch = cleaned.match(/"body"\s*:\s*"([\s\S]*?)"(?:\s*}|\s*$)/i);
+      
+      const subject = subjectMatch ? subjectMatch[1].replace(/\\n/g, '').trim() : 'Nuevo mensaje';
+      let body = bodyMatch ? bodyMatch[1] : cleaned;
+      
+      // Si el regex estricto falló, intentar extraer todo lo que sigue después de "body": "
+      if (!bodyMatch) {
+        const startIdx = cleaned.indexOf('"body"');
+        if (startIdx !== -1) {
+          const colonIdx = cleaned.indexOf(':', startIdx);
+          if (colonIdx !== -1) {
+            const firstQuote = cleaned.indexOf('"', colonIdx);
+            if (firstQuote !== -1) {
+              let extracted = cleaned.substring(firstQuote + 1);
+              // quitar la ultima comilla y la posible llave de cierre si están truncadas
+              extracted = extracted.replace(/"\s*}?\s*$/, '');
+              body = extracted;
+            }
+          }
+        }
+      }
+
+      // Limpiar escapes de JSON
+      body = body.replace(/\\n/g, '\n').replace(/\\"/g, '"').trim();
+      
+      return { subject, body };
     }
   }
 }

@@ -18,4 +18,16 @@ export class GenerateMessageDto {
   @IsOptional()
   @IsIn(['WHATSAPP', 'TELEGRAM', 'MAIL'])
   channel?: 'WHATSAPP' | 'TELEGRAM' | 'MAIL';
+
+  @IsOptional()
+  @IsString()
+  userName?: string;
+
+  @IsOptional()
+  @IsString()
+  userEmail?: string;
+
+  @IsOptional()
+  @IsString()
+  userPhone?: string;
 }

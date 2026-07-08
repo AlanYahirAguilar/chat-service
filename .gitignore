@@ -4,7 +4,7 @@ node_modules/
 build/
 temp/
 tmp/
-tests/
+#tests/
 scripts/
 # Logs
 logs
@@ -23,9 +23,9 @@ lerna-debug.log*
 .env*
 # temp directory
 .temp
-.tmp
+.tmp/
 # session directory
-auth_info_baileys/
+.baileys_auth/
 reports/
 **/agents/
 **/.agents/
@@ -38,3 +38,4 @@ modules.txt*
 **.node-persist**
 **_IGNORE_**
 # end managed
+.agents/

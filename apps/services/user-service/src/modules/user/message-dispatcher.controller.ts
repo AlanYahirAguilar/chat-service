@@ -16,4 +16,28 @@ export class MessageDispatcherController {
       payload.prompt,
     );
   }
+
+  @MessagePattern({ cmd: 'generateDraft' })
+  async generateDraft(
+    @Payload() payload: { userId: bigint; contactId: string; prompt: string },
+  ) {
+    return await this.dispatcherService.generateDraft(
+      payload.userId,
+      payload.contactId,
+      payload.prompt,
+    );
+  }
+
+  @MessagePattern({ cmd: 'sendDraft' })
+  async sendDraft(
+    @Payload() payload: { userId: bigint; contactId: string; historyId: string; message: string; subject?: string },
+  ) {
+    return await this.dispatcherService.sendDraft(
+      payload.userId,
+      payload.contactId,
+      payload.historyId,
+      payload.message,
+      payload.subject,
+    );
+  }
 }

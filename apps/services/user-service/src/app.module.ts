@@ -5,11 +5,11 @@ import { UserModule } from './modules/user/user.module';
 import { SharedClientsModule } from './common/shared.clients.module';
 
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { LoggerModule } from '@syncslot/shared';
+import { LoggerModule } from '@chat-monorepo/shared';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '../../../.env' }),
     EventEmitterModule.forRoot(),
     LoggerModule,
     typeOrmConfig,
@@ -19,4 +19,4 @@ import { LoggerModule } from '@syncslot/shared';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

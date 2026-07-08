@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CustomLoggerService } from '@syncslot/shared';
+import { CustomLoggerService } from '@chat-monorepo/shared';
 import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class TelegramService {
   async sendMessage(phoneOrUsername: string, message: string) {
     try {
       this.logger.log(`Enviando mensaje a [${phoneOrUsername}]`, 'TELEGRAM');
-      
+
       if (!this.botToken) {
         throw new Error('TELEGRAM_BOT_TOKEN no configurado');
       }

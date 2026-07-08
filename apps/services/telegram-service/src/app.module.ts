@@ -3,11 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import typeOrmConfig from './config/type.orm.config';
 import { TelegramModule } from './modules/telegram/telegram.module';
 
-import { LoggerModule } from '@syncslot/shared';
+import { LoggerModule } from '@chat-monorepo/shared';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '../../../.env' }),
     LoggerModule,
     typeOrmConfig,
     TelegramModule,
@@ -15,4 +15,4 @@ import { LoggerModule } from '@syncslot/shared';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,6 +1,6 @@
 import { Entity, ManyToOne, JoinColumn } from 'typeorm';
 import type { Relation } from 'typeorm';
-import { Base } from '@syncslot/shared';
+import { Base } from '@chat-monorepo/shared';
 import { Role } from './role.entity';
 import { Privilege } from './privilege.entity';
 

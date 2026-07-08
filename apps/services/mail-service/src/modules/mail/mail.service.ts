@@ -6,14 +6,14 @@ import {
   sendTestNotificationMessage,
   generatedMessageTemplate,
 } from './templates/email.templates';
-import { stringConstants } from '@syncslot/shared';
-import { CustomLoggerService } from '@syncslot/shared';
+import { stringConstants } from '@chat-monorepo/shared';
+import { CustomLoggerService } from '@chat-monorepo/shared';
 @Injectable()
 export class MailService {
   constructor(
     private mailerService: MailerService,
     private readonly logger: CustomLoggerService,
-  ) {}
+  ) { }
   async sendMail(options: {
     to: string;
     subject: string;
@@ -45,14 +45,29 @@ export class MailService {
     to: string;
     subject: string;
     body: string;
+    replyTo?: string;
+    fromName?: string;
   }): Promise<{ success: boolean; error?: string }> {
     try {
       this.logger.log(`Enviando correo generado a ${options.to}`, 'EMAIL');
-      await this.mailerService.sendMail({
+      
+      const mailOptions: any = {
         to: options.to,
         subject: options.subject || 'Nuevo mensaje',
         html: generatedMessageTemplate(options.body),
-      });
+      };
+
+      if (options.replyTo) {
+        mailOptions.replyTo = options.replyTo;
+      }
+      
+      if (options.fromName) {
+        // Obtenemos el correo global que ya está configurado en el MailerService
+        // pero le cambiamos el nombre a mostrar (Ej: "Alan <bot@empresa.com>")
+        mailOptions.from = `"${options.fromName}" <${process.env.MAIL_USER}>`;
+      }
+
+      await this.mailerService.sendMail(mailOptions);
       this.logger.log(`Correo enviado exitosamente a ${options.to}`, 'EMAIL');
       return { success: true };
     } catch (error) {

@@ -16,7 +16,7 @@ import { ContactProxyModule } from './proxies/contact/contact.proxy.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '../../.env' }),
     EventEmitterModule.forRoot(),
     ThrottlerModule.forRootAsync(throttlerConfig),
     LoggerModule,

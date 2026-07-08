@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import typeOrmConfig from './config/type.orm.config';
 import { AuthModule } from './modules/auth/auth.module';
-import { LoggerModule } from '@syncslot/shared';
+import { LoggerModule } from '@chat-monorepo/shared';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { IamModule } from './modules/iam/iam.module';
@@ -10,7 +10,7 @@ import { SharedClientsModule } from './common/shared.clients.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '../../../.env' }),
     typeOrmConfig,
     SharedClientsModule,
     AuthModule,
@@ -25,4 +25,4 @@ import { SharedClientsModule } from './common/shared.clients.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

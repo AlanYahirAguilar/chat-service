@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TelegramService } from './telegram.service';
 import { TelegramController } from './telegram.controller';
-import { LoggerModule } from '@syncslot/shared';
+import { LoggerModule } from '@chat-monorepo/shared';
 
 @Module({
   imports: [LoggerModule],
@@ -9,4 +9,4 @@ import { LoggerModule } from '@syncslot/shared';
   providers: [TelegramService],
   exports: [TelegramService],
 })
-export class TelegramModule {}
+export class TelegramModule { }

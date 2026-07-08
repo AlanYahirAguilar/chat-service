@@ -1,5 +1,5 @@
 export const stringConstants = {
-  APP_NAME: 'SyncSlot',
+  APP_NAME: 'chat-monorepo',
   APP_VERSION: '1.0.0',
   APP_URL: process.env.APP_URL || '',
 

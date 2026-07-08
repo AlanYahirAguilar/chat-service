@@ -1,5 +1,5 @@
 {
-  "name": "syncslot-redis-service",
+  "name": "chat-monorepo-redis-service",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -115,4 +115,3 @@
     "testEnvironment": "node"
   }
 }
-

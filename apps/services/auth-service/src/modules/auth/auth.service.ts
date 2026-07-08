@@ -5,8 +5,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { Inject, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { LoginDto } from '@syncslot/shared';
-import { comparePasswords, generateSecureToken } from '@syncslot/shared';
+import { LoginDto } from '@chat-monorepo/shared';
+import { comparePasswords, generateSecureToken } from '@chat-monorepo/shared';
 
 import { ConfigService } from '@nestjs/config';
 import { authConfig } from '@/config/auth.config';
@@ -30,7 +30,7 @@ export class AuthService {
     private readonly configService: ConfigService,
 
     private readonly iamService: IamService,
-  ) {}
+  ) { }
 
   async validateUser(
     email: string,

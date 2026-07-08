@@ -1,5 +1,5 @@
 {
-  "name": "syncslot-user-service",
+  "name": "chat-monorepo-user-service",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -30,7 +30,7 @@
     "protobufjs": "7.2.4"
   },
   "dependencies": {
-    "@syncslot/shared": "*",
+    "@chat-monorepo/shared": "*",
     "@azure/storage-blob": "12.32.0",
     "@google/generative-ai": "0.24.1",
     "@hapi/boom": "10.0.1",

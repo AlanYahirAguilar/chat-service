@@ -1,5 +1,5 @@
 {
-    "name": "syncslot-gateway",
+    "name": "chat-monorepo-gateway",
     "version": "0.0.1",
     "description": "",
     "author": "",
@@ -63,7 +63,7 @@
         "rxjs": "7.8.1",
         "typeorm": "0.3.29",
         "uuid": "14.0.0",
-        "@syncslot/shared": "*"
+        "@chat-monorepo/shared": "*"
     },
     "devDependencies": {
         "@eslint/eslintrc": "3.2.0",
