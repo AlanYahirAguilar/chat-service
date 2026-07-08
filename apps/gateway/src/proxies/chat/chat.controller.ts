@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Inject, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, Inject, UseGuards } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { firstValueFrom, catchError, throwError } from 'rxjs';
@@ -12,7 +12,7 @@ import { CurrentUser } from '@/proxies/auth/decorators/current-user.decorator';
 export class ChatController {
   constructor(
     @Inject('USER_SERVICE') private readonly userServiceClient: ClientProxy,
-  ) {}
+  ) { }
 
   @Post('send')
   @ApiOperation({ summary: 'Despacha un mensaje a un contacto utilizando IA para adaptar su tono' })
@@ -73,6 +73,35 @@ export class ChatController {
           catchError((error) => {
             return throwError(() => new RpcException(error.message || 'Error en microservicio'));
           }),
+        ),
+    );
+  }
+
+  @Get('whatsapp-status')
+  @ApiOperation({ summary: 'Estado de conexión WhatsApp (Baileys). No requiere body.' })
+  async getWhatsappStatus() {
+    return await firstValueFrom(
+      this.userServiceClient
+        .send({ cmd: 'getWhatsappStatus' }, {})
+        .pipe(
+          catchError(() =>
+            throwError(() => new RpcException('No se pudo obtener el estado de WhatsApp')),
+          ),
+        ),
+    );
+  }
+
+  @Post('whatsapp-pair')
+  @ApiOperation({ summary: 'Solicita código de emparejamiento de 8 dígitos (alternativa al QR)' })
+  async requestWhatsappPair(@Body() body: { phoneNumber: string }) {
+    if (!body.phoneNumber) throw new RpcException('Se requiere phoneNumber');
+    return await firstValueFrom(
+      this.userServiceClient
+        .send({ cmd: 'requestWhatsappPairingCode' }, { phoneNumber: body.phoneNumber })
+        .pipe(
+          catchError((error) =>
+            throwError(() => new RpcException(error.message || 'Error al solicitar código')),
+          ),
         ),
     );
   }
