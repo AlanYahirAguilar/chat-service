@@ -1,0 +1,501 @@
+<title>Communication MF · Diseño de interfaz</title>
+<style>
+  :root {
+    --bg: #F2F4F3;
+    --surface: #FFFFFF;
+    --surface-2: #F7F9F8;
+    --ink: #1A2423;
+    --ink-2: #3F4B49;
+    --muted: #64726F;
+    --faint: #93A09D;
+    --line: #ECEEED;
+    --line-2: #E2E6E4;
+    --brand: #0F5257;
+    --brand-ink: #0B3B3F;
+    --brand-weak: #EAF2F1;
+    --brand-line: #CFE1DF;
+    --gmail: #D93025;
+    --whatsapp: #1EA453;
+    --telegram: #1E96D4;
+    --ok: #1E7A46;
+    --radius: 12px;
+    --radius-sm: 9px;
+    --shadow: 0 1px 2px rgba(20,36,35,.04), 0 12px 32px -18px rgba(20,36,35,.16);
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0D1211; --surface: #151E1D; --surface-2: #111918;
+      --ink: #E8EDEB; --ink-2: #C4CECC; --muted: #93A19E; --faint: #6B7876;
+      --line: #202A29; --line-2: #2A3634;
+      --brand: #54B9B4; --brand-ink: #7CCDC8; --brand-weak: #15302E; --brand-line: #234441;
+      --gmail: #F0857C; --whatsapp: #4FD08A; --telegram: #63BEEC; --ok: #5FCB8C;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 34px -20px rgba(0,0,0,.65);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #F2F4F3; --surface: #FFFFFF; --surface-2: #F7F9F8;
+    --ink: #1A2423; --ink-2: #3F4B49; --muted: #64726F; --faint: #93A09D;
+    --line: #ECEEED; --line-2: #E2E6E4;
+    --brand: #0F5257; --brand-ink: #0B3B3F; --brand-weak: #EAF2F1; --brand-line: #CFE1DF;
+    --gmail: #D93025; --whatsapp: #1EA453; --telegram: #1E96D4; --ok: #1E7A46;
+    --shadow: 0 1px 2px rgba(20,36,35,.04), 0 12px 32px -18px rgba(20,36,35,.16);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0D1211; --surface: #151E1D; --surface-2: #111918;
+    --ink: #E8EDEB; --ink-2: #C4CECC; --muted: #93A19E; --faint: #6B7876;
+    --line: #202A29; --line-2: #2A3634;
+    --brand: #54B9B4; --brand-ink: #7CCDC8; --brand-weak: #15302E; --brand-line: #234441;
+    --gmail: #F0857C; --whatsapp: #4FD08A; --telegram: #63BEEC; --ok: #5FCB8C;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 34px -20px rgba(0,0,0,.65);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv11";
+  }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  .eyebrow { font-size: 13px; font-weight: 550; color: var(--brand); margin: 0 0 12px; }
+  .page-title { font-size: 27px; font-weight: 600; letter-spacing: -.02em; margin: 0 0 8px; text-wrap: balance; }
+  .page-sub { color: var(--muted); font-size: 15px; margin: 0 0 8px; max-width: 64ch; }
+
+  .section-label { font-size: 14px; font-weight: 600; color: var(--ink); margin: 48px 0 16px; }
+  .section-label span { color: var(--muted); font-weight: 400; }
+
+  /* ---- App frame ---- */
+  .frame {
+    background: var(--surface);
+    border: 1px solid var(--line-2);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .chrome {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 18px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .dots { display: flex; gap: 7px; }
+  .dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--line-2); display: block; }
+  .crumb { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 9px; }
+  .crumb b { color: var(--ink-2); font-weight: 550; }
+  .crumb .sep { color: var(--faint); }
+  .chrome-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .avatar-sm { width: 27px; height: 27px; border-radius: 50%; background: var(--brand); color: #fff; font-size: 11px; font-weight: 600; display: grid; place-items: center; }
+  :root[data-theme="dark"] .avatar-sm { color: #06201F; }
+
+  /* ---- 3-pane grid ---- */
+  .panes { display: grid; grid-template-columns: 250px 1fr 348px; min-height: 540px; }
+  .pane { border-right: 1px solid var(--line); display: flex; flex-direction: column; min-width: 0; }
+  .pane:last-child { border-right: 0; }
+  .pane-head { padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; }
+  .pane-head h3 { font-size: 13px; font-weight: 600; margin: 0; color: var(--ink); }
+  .pane-head .count { font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; }
+
+  /* search */
+  .search { padding: 4px 12px 12px; }
+  .search input {
+    width: 100%; border: 1px solid var(--line-2); background: var(--surface-2);
+    border-radius: var(--radius-sm); padding: 9px 12px; font: inherit; font-size: 13px; color: var(--ink);
+  }
+  .search input::placeholder { color: var(--faint); }
+  .search input:focus { outline: none; border-color: var(--brand-line); background: var(--surface); }
+
+  /* contact list */
+  .contacts { padding: 0 8px 12px; overflow: auto; display: flex; flex-direction: column; gap: 2px; }
+  .contact {
+    display: flex; align-items: center; gap: 12px; padding: 9px 10px; border-radius: var(--radius-sm);
+    cursor: pointer; border: 1px solid transparent;
+  }
+  .contact:hover { background: var(--surface-2); }
+  .contact.active { background: var(--brand-weak); }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: 12.5px; font-weight: 550; color: #fff; }
+  :root[data-theme="dark"] .avatar { color: #0b1a19; }
+  .c-body { min-width: 0; flex: 1; }
+  .c-name { font-size: 13.5px; font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .c-role { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chan-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .chan-dot.gmail { background: var(--gmail); }
+  .chan-dot.whatsapp { background: var(--whatsapp); }
+  .chan-dot.telegram { background: var(--telegram); }
+
+  /* composer pane */
+  .composer { padding: 22px; overflow: auto; gap: 22px; display: flex; flex-direction: column; }
+  .composer-top { display: flex; align-items: center; gap: 13px; }
+  .composer-top .avatar { width: 42px; height: 42px; font-size: 14px; }
+  .composer-top .who .n { font-size: 15px; font-weight: 600; }
+  .composer-top .who .r { font-size: 12.5px; color: var(--muted); }
+
+  .profile { border-radius: var(--radius); background: var(--surface-2); padding: 16px 18px; }
+  .profile-h { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .profile-h .t { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .profile-h .lock { font-size: 12px; color: var(--faint); margin-left: auto; }
+  .traits { display: flex; flex-wrap: wrap; gap: 8px; }
+  .trait { font-size: 12.5px; padding: 4px 11px; border-radius: 999px; background: var(--surface); color: var(--muted); }
+  .trait b { font-weight: 550; color: var(--ink); }
+  .profile-note { margin: 12px 0 0; font-size: 12.5px; color: var(--muted); }
+  .profile-note b { color: var(--ink-2); font-weight: 550; }
+
+  .field-label { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
+  .field-label .hint { font-weight: 400; color: var(--muted); }
+
+  /* channel selector */
+  .channels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .channel {
+    border: 1px solid var(--line-2); border-radius: var(--radius-sm); padding: 12px; cursor: pointer;
+    background: var(--surface); display: flex; flex-direction: column; gap: 7px; text-align: left;
+    font: inherit; color: var(--ink);
+  }
+  .channel:hover { border-color: var(--brand-line); }
+  .channel.sel { border-color: var(--brand); background: var(--brand-weak); }
+  .channel .cn { font-size: 13px; font-weight: 550; display: flex; align-items: center; gap: 8px; }
+  .channel .cs { font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .ok-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
+  .default-tag { font-size: 11px; color: var(--brand); font-weight: 550; }
+
+  /* prompt */
+  .prompt textarea {
+    width: 100%; border: 1px solid var(--line-2); border-radius: var(--radius-sm);
+    padding: 12px 14px; font: inherit; font-size: 13.5px; color: var(--ink); background: var(--surface); resize: none; min-height: 74px;
+    line-height: 1.55;
+  }
+  .prompt textarea:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-weak); }
+  .templates { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
+  .chip { font-size: 12.5px; padding: 6px 13px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); color: var(--muted); cursor: pointer; font-family: inherit; }
+  .chip:hover { border-color: var(--brand-line); color: var(--ink); }
+
+  .composer-actions { display: flex; align-items: center; gap: 12px; }
+  .btn {
+    font: inherit; font-size: 13px; font-weight: 550; border-radius: var(--radius-sm);
+    padding: 10px 17px; cursor: pointer; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 9px;
+  }
+  .btn-primary { background: var(--brand); color: #fff; }
+  :root[data-theme="dark"] .btn-primary { color: #06201F; }
+  .btn-primary:hover { background: var(--brand-ink); }
+  .btn-ghost { background: transparent; border-color: var(--line-2); color: var(--ink-2); }
+  .btn-ghost:hover { border-color: var(--brand-line); color: var(--ink); }
+  .kbd { font-size: 11px; opacity: .72; font-variant-numeric: tabular-nums; }
+
+  /* preview pane */
+  .preview { background: var(--surface-2); display: flex; flex-direction: column; }
+  .preview-tabs { display: flex; gap: 4px; padding: 12px 14px 0; border-bottom: 1px solid var(--line); }
+  .ptab { font: inherit; font-size: 12.5px; font-weight: 550; color: var(--muted); background: transparent; border: 0; padding: 9px 12px; cursor: pointer; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 8px; margin-bottom: -1px; }
+  .ptab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--brand); }
+  .preview-body { padding: 18px; overflow: auto; flex: 1; }
+  .preview-status { font-size: 12px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
+
+  /* channel-styled message cards */
+  .msg { display: none; }
+  .msg.show { display: block; }
+
+  /* gmail */
+  .gmail-card { border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+  .gmail-h { padding: 13px 16px; border-bottom: 1px solid var(--line); }
+  .gmail-subject { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .gmail-meta { font-size: 12px; color: var(--muted); }
+  .gmail-body { padding: 16px; font-size: 13px; color: var(--ink-2); }
+  .gmail-body p { margin: 0 0 11px; }
+
+  /* whatsapp */
+  .wa-canvas { background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--radius); padding: 18px; }
+  .wa-bubble { background: var(--surface-2); border-radius: 12px 12px 12px 4px; padding: 12px 14px; font-size: 13px; color: var(--ink-2); }
+  .wa-bubble p { margin: 0 0 9px; }
+  .wa-time { font-size: 11px; color: var(--faint); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* telegram */
+  .tg-canvas { background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--radius); padding: 18px; }
+  .tg-bubble { background: var(--brand-weak); border-radius: 12px 12px 4px 12px; padding: 12px 14px; font-size: 13px; color: var(--ink); margin-left: auto; max-width: 92%; }
+  .tg-bubble p { margin: 0 0 9px; }
+  .tg-time { font-size: 11px; color: var(--telegram); text-align: right; font-variant-numeric: tabular-nums; }
+
+  .preview-actions { padding: 14px 18px; border-top: 1px solid var(--line); display: flex; gap: 10px; }
+  .preview-actions .btn { flex: 1; justify-content: center; }
+  .btn-send { background: var(--brand); color: #fff; }
+  :root[data-theme="dark"] .btn-send { color: #06201F; }
+  .btn-send:hover { background: var(--brand-ink); }
+
+  /* ---- signature note ---- */
+  .signature-note { color: var(--muted); font-size: 14px; margin: 0 0 20px; max-width: 62ch; }
+
+  /* ---- mobile frame ---- */
+  .mobile-row { display: grid; grid-template-columns: 300px 1fr; gap: 32px; align-items: start; }
+  .phone { width: 300px; background: var(--surface); border: 1px solid var(--line-2); border-radius: 28px; box-shadow: var(--shadow); overflow: hidden; }
+  .phone-notch { height: 32px; background: var(--surface-2); border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
+  .phone-notch::after { content: ""; width: 88px; height: 5px; border-radius: 3px; background: var(--line-2); }
+  .phone-body { padding: 18px; }
+  .stepper { display: flex; align-items: center; gap: 6px; margin-bottom: 14px; }
+  .step { flex: 1; height: 3px; border-radius: 2px; background: var(--line-2); }
+  .step.done { background: var(--brand); }
+  .step-label { font-size: 12px; color: var(--brand); font-weight: 550; margin-bottom: 6px; }
+  .m-title { font-size: 18px; font-weight: 600; margin: 0 0 16px; letter-spacing: -.01em; }
+  .m-card { border: 1px solid var(--line-2); border-radius: var(--radius); padding: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 11px; }
+  .m-card.sel { border-color: var(--brand); background: var(--brand-weak); }
+  .m-card .avatar { width: 30px; height: 30px; font-size: 11px; }
+  .m-sticky { margin-top: 18px; }
+  .m-sticky .btn { width: 100%; justify-content: center; }
+
+  .mobile-notes { padding-top: 6px; }
+  .mobile-notes h4 { font-size: 15px; margin: 0 0 14px; font-weight: 600; }
+  .mobile-notes ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 13px; }
+  .mobile-notes li { font-size: 13.5px; color: var(--ink-2); padding-left: 18px; position: relative; }
+  .mobile-notes li::before { content: ""; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+  .mobile-notes li b { font-weight: 600; color: var(--ink); }
+
+  .legend { margin-top: 48px; padding: 18px 20px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--surface); display: flex; flex-wrap: wrap; gap: 22px; font-size: 12.5px; color: var(--muted); align-items: center; }
+  .legend .li { display: flex; align-items: center; gap: 8px; }
+  .legend .note { margin-left: auto; color: var(--faint); }
+
+  @media (max-width: 920px) {
+    .panes { grid-template-columns: 1fr; }
+    .pane { border-right: 0; border-bottom: 1px solid var(--line); }
+    .pane.contacts-pane { display: none; }
+    .mobile-row { grid-template-columns: 1fr; justify-items: start; }
+  }
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Microfrontend · Comunicación inteligente</p>
+  <h1 class="page-title">Redacta con IA, envía en el canal correcto</h1>
+  <p class="page-sub">Diseño de interfaz del módulo <b>communicationMf</b>. El usuario elige un contacto, un canal y escribe una intención — la IA propone el mensaje respetando el perfil del contacto, listo para revisar y enviar.</p>
+
+  <div class="section-label">Vista principal <span>· Escritorio</span></div>
+
+  <div class="frame">
+    <!-- Shell chrome -->
+    <div class="chrome">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="crumb"><b>Shell</b><span class="sep">/</span>Comunicación<span class="sep">/</span>Redactar</span>
+      <span class="chrome-right">
+        <span class="avatar-sm">JT</span>
+      </span>
+    </div>
+
+    <!-- 3 panes -->
+    <div class="panes">
+      <!-- Pane 1: contacts -->
+      <div class="pane contacts-pane">
+        <div class="pane-head"><h3>Contactos</h3><span class="count">128</span></div>
+        <div class="search"><input type="text" placeholder="Buscar contacto…" aria-label="Buscar contacto"></div>
+        <div class="contacts">
+          <div class="contact active" aria-current="true">
+            <span class="avatar" style="background:#0F5257">AR</span>
+            <span class="c-body"><span class="c-name">Ana Rendón</span><span class="c-role">Directora de Operaciones</span></span>
+            <span class="chan-dot gmail" title="Canal por defecto: Gmail"></span>
+          </div>
+          <div class="contact">
+            <span class="avatar" style="background:#7A5C3E">LM</span>
+            <span class="c-body"><span class="c-name">Luis Márquez</span><span class="c-role">Proveedor · Logística</span></span>
+            <span class="chan-dot whatsapp"></span>
+          </div>
+          <div class="contact">
+            <span class="avatar" style="background:#4A5A7A">CP</span>
+            <span class="c-body"><span class="c-name">Carla Peña</span><span class="c-role">Cliente · Cuenta clave</span></span>
+            <span class="chan-dot telegram"></span>
+          </div>
+          <div class="contact">
+            <span class="avatar" style="background:#5E7A4A">DS</span>
+            <span class="c-body"><span class="c-name">Diego Soto</span><span class="c-role">Socio comercial</span></span>
+            <span class="chan-dot gmail"></span>
+          </div>
+          <div class="contact">
+            <span class="avatar" style="background:#7A4A6A">MA</span>
+            <span class="c-body"><span class="c-name">Marina Ávila</span><span class="c-role">Cliente · Nuevo</span></span>
+            <span class="chan-dot whatsapp"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pane 2: composer -->
+      <div class="pane composer">
+        <div class="composer-top">
+          <span class="avatar" style="background:#0F5257;width:42px;height:42px;font-size:14px">AR</span>
+          <span class="who"><div class="n">Ana Rendón</div><div class="r">Directora de Operaciones · Contacto interno</div></span>
+        </div>
+
+        <div class="profile">
+          <div class="profile-h">
+            <span class="t">Perfil de comunicación</span>
+            <span class="lock">Solo lectura</span>
+          </div>
+          <div class="traits">
+            <span class="trait">Tono <b>Ejecutivo</b></span>
+            <span class="trait">Idioma <b>Español</b></span>
+            <span class="trait">Longitud <b>Media</b></span>
+            <span class="trait">Emojis <b>No</b></span>
+            <span class="trait">Saludo <b>“Estimada Ana,”</b></span>
+            <span class="trait">Cierre <b>“Saludos cordiales,”</b></span>
+          </div>
+          <p class="profile-note"><b>Instrucciones:</b> evita tecnicismos y enfatiza la puntualidad de las reuniones.</p>
+        </div>
+
+        <div>
+          <div class="field-label">Canal <span class="hint">— sugerido por el perfil</span></div>
+          <div class="channels">
+            <button class="channel sel" aria-pressed="true">
+              <span class="cn"><span class="chan-dot gmail"></span> Gmail</span>
+              <span class="cs"><span class="ok-dot"></span> Conectado</span>
+              <span class="default-tag">Por defecto</span>
+            </button>
+            <button class="channel" aria-pressed="false">
+              <span class="cn"><span class="chan-dot whatsapp"></span> WhatsApp</span>
+              <span class="cs"><span class="ok-dot"></span> Conectado</span>
+            </button>
+            <button class="channel" aria-pressed="false">
+              <span class="cn"><span class="chan-dot telegram"></span> Telegram</span>
+              <span class="cs" style="color:var(--faint)">No conectado</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="prompt">
+          <div class="field-label">Tu intención <span class="hint">— en lenguaje natural</span></div>
+          <textarea aria-label="Intención">Invítala a la reunión de planeación del viernes a las 10:00 en la sala principal.</textarea>
+          <div class="templates">
+            <button class="chip">Agendar reunión</button>
+            <button class="chip">Seguimiento</button>
+            <button class="chip">Agradecer</button>
+            <button class="chip">Recordatorio</button>
+          </div>
+        </div>
+
+        <div class="composer-actions">
+          <button class="btn btn-primary">Generar <span class="kbd">⌘↵</span></button>
+          <button class="btn btn-ghost">Regenerar</button>
+        </div>
+      </div>
+
+      <!-- Pane 3: preview -->
+      <div class="pane preview">
+        <div class="preview-tabs" role="tablist" aria-label="Vista previa por canal">
+          <button class="ptab" role="tab" aria-selected="true" data-ch="gmail"><span class="chan-dot gmail"></span> Gmail</button>
+          <button class="ptab" role="tab" aria-selected="false" data-ch="whatsapp"><span class="chan-dot whatsapp"></span> WhatsApp</button>
+          <button class="ptab" role="tab" aria-selected="false" data-ch="telegram"><span class="chan-dot telegram"></span> Telegram</button>
+        </div>
+        <div class="preview-body">
+          <div class="preview-status"><span class="live-dot"></span> Generado por IA · revisa antes de enviar</div>
+
+          <!-- Gmail -->
+          <div class="msg show" data-ch="gmail">
+            <div class="gmail-card">
+              <div class="gmail-h">
+                <div class="gmail-subject">Invitación — Reunión de planeación (vie 10:00)</div>
+                <div class="gmail-meta">Para: ana.rendon@empresa.com</div>
+              </div>
+              <div class="gmail-body">
+                <p>Estimada Ana,</p>
+                <p>Quisiera invitarte a la reunión de planeación del próximo viernes a las 10:00 en la sala principal. Tu participación es clave para alinear los objetivos del trimestre.</p>
+                <p>Te agradezco confirmar tu asistencia con antelación.</p>
+                <p>Saludos cordiales,</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- WhatsApp -->
+          <div class="msg" data-ch="whatsapp">
+            <div class="wa-canvas">
+              <div class="wa-bubble">
+                <p>Estimada Ana, te comparto una invitación: el viernes a las 10:00 tendremos la reunión de planeación en la sala principal.</p>
+                <p>Tu presencia es importante para alinear los objetivos del trimestre. ¿Me confirmas tu asistencia? Saludos cordiales.</p>
+                <div class="wa-time">10:24</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Telegram -->
+          <div class="msg" data-ch="telegram">
+            <div class="tg-canvas">
+              <div class="tg-bubble">
+                <p>Estimada Ana, quisiera invitarte a la reunión de planeación del viernes a las 10:00 en la sala principal.</p>
+                <p>Tu participación es clave para el trimestre. Quedo atento a tu confirmación. Saludos cordiales.</p>
+                <div class="tg-time">10:24 ✓✓</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="preview-actions">
+          <button class="btn btn-ghost">Editar</button>
+          <button class="btn btn-send">Enviar <span class="kbd">⌘⇧↵</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signature: channel-contextual preview -->
+  <div class="section-label">La vista previa toma la forma del canal</div>
+  <p class="signature-note">El mismo mensaje se muestra tal como llegará: hilo de correo en Gmail, burbuja en WhatsApp y Telegram. El usuario ve el resultado real, no un borrador abstracto. Usa las pestañas de la vista previa para alternar.</p>
+
+  <!-- Mobile -->
+  <div class="section-label">Adaptación móvil <span>· Flujo por pasos</span></div>
+  <div class="mobile-row">
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-body">
+        <div class="stepper" aria-hidden="true">
+          <span class="step done"></span><span class="step done"></span><span class="step done"></span><span class="step"></span>
+        </div>
+        <div class="step-label">Paso 3 de 4 · Intención</div>
+        <h3 class="m-title">¿Qué quieres decirle a Ana?</h3>
+
+        <div class="m-card sel">
+          <span class="avatar" style="background:#0F5257">AR</span>
+          <span class="c-body"><span class="c-name">Ana Rendón</span><span class="c-role">Gmail · Ejecutivo</span></span>
+          <span class="chan-dot gmail"></span>
+        </div>
+
+        <div class="prompt" style="margin-top:6px">
+          <textarea style="min-height:88px">Invítala a la reunión de planeación del viernes a las 10:00.</textarea>
+          <div class="templates">
+            <button class="chip">Agendar</button>
+            <button class="chip">Seguimiento</button>
+            <button class="chip">Agradecer</button>
+          </div>
+        </div>
+
+        <div class="m-sticky">
+          <button class="btn btn-primary">Generar mensaje</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-notes">
+      <h4>Cómo se adapta</h4>
+      <ul>
+        <li><b>Escritorio (≥1024px):</b> tres paneles a la vez — contactos, composición y vista previa — sin cambiar de pantalla.</li>
+        <li><b>Tablet (640–1023px):</b> la lista de contactos se colapsa en un panel lateral; composición y vista previa comparten el espacio.</li>
+        <li><b>Móvil (&lt;640px):</b> un flujo por pasos — Contacto → Canal → Intención → Vista previa — con barra de acción fija abajo y el canal en hoja inferior.</li>
+        <li><b>Menos clics:</b> el canal por defecto viene del perfil, las plantillas rellenan la intención, y ⌘↵ genera sin tocar el ratón.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="li"><span class="chan-dot gmail"></span> Gmail</span>
+    <span class="li"><span class="chan-dot whatsapp"></span> WhatsApp (OpenWA)</span>
+    <span class="li"><span class="chan-dot telegram"></span> Telegram</span>
+    <span class="li"><span class="ok-dot"></span> Canal conectado</span>
+    <span class="note">Mockup — sin datos reales</span>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const tabs = document.querySelectorAll('.ptab');
+    const msgs = document.querySelectorAll('.msg');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        const ch = tab.getAttribute('data-ch');
+        tabs.forEach(function (t) { t.setAttribute('aria-selected', t === tab ? 'true' : 'false'); });
+        msgs.forEach(function (m) { m.classList.toggle('show', m.getAttribute('data-ch') === ch); });
+      });
+    });
+  })();
+</script>
