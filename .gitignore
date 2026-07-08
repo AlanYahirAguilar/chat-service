@@ -39,3 +39,5 @@ modules.txt*
 **_IGNORE_**
 # end managed
 .agents/
+
+*.pdf
