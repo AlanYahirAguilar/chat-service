@@ -47,9 +47,9 @@ export class MessageDispatcherService {
       const iaResponse = await firstValueFrom(
         this.iaServiceClient.send(
           { cmd: 'generateMessage' },
-          { 
-            prompt, 
-            tone: contact.tone, 
+          {
+            prompt,
+            tone: contact.tone,
             channel: contact.platform,
             userName: contact.user.name,
             userEmail: contact.user.email,
@@ -146,9 +146,9 @@ export class MessageDispatcherService {
       const iaResponse = await firstValueFrom(
         this.iaServiceClient.send(
           { cmd: 'generateMessage' },
-          { 
-            prompt, 
-            tone: contact.tone, 
+          {
+            prompt,
+            tone: contact.tone,
             channel: contact.platform,
             userName: contact.user.name,
             userEmail: contact.user.email,
@@ -166,11 +166,11 @@ export class MessageDispatcherService {
       history.generatedMessage = generatedMessage;
       await this.historyRepository.save(history);
 
-      return { 
-        success: true, 
-        historyId: history.id, 
+      return {
+        success: true,
+        historyId: history.id,
         message: generatedMessage,
-        subject: generatedSubject 
+        subject: generatedSubject
       };
     } catch (error) {
       const err = error as Error;
@@ -257,5 +257,22 @@ export class MessageDispatcherService {
 
       throw new RpcException(`Falló el envío del borrador: ${err.message}`);
     }
+  }
+
+  /** Consulta el estado de conexión del WhatsApp-service (Baileys). */
+  async getWhatsappStatus(): Promise<{ status: string; qrRequired: boolean }> {
+    try {
+      return await firstValueFrom(
+        this.whatsappServiceClient.send({ cmd: 'getQRCode' }, {}),
+      );
+    } catch {
+      return { status: 'disconnected', qrRequired: true };
+    }
+  }
+  /** Solicita un código de emparejamiento de 8 dígitos para vincular sin QR. */
+  async requestWhatsappPairingCode(phoneNumber: string): Promise<{ code: string }> {
+    return await firstValueFrom(
+      this.whatsappServiceClient.send({ cmd: 'requestPairingCode' }, { phoneNumber }),
+    );
   }
 }

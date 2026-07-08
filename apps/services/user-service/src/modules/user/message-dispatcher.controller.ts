@@ -4,7 +4,7 @@ import { MessageDispatcherService } from './message-dispatcher.service';
 
 @Controller()
 export class MessageDispatcherController {
-  constructor(private readonly dispatcherService: MessageDispatcherService) {}
+  constructor(private readonly dispatcherService: MessageDispatcherService) { }
 
   @MessagePattern({ cmd: 'dispatchMessage' })
   async dispatchMessage(
@@ -26,6 +26,16 @@ export class MessageDispatcherController {
       payload.contactId,
       payload.prompt,
     );
+  }
+
+  @MessagePattern({ cmd: 'getWhatsappStatus' })
+  async getWhatsappStatus() {
+    return await this.dispatcherService.getWhatsappStatus();
+  }
+
+  @MessagePattern({ cmd: 'requestWhatsappPairingCode' })
+  async requestWhatsappPairingCode(@Payload() payload: { phoneNumber: string }) {
+    return await this.dispatcherService.requestWhatsappPairingCode(payload.phoneNumber);
   }
 
   @MessagePattern({ cmd: 'sendDraft' })
