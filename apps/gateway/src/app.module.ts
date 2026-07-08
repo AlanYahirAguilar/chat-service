@@ -11,9 +11,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EventsModule } from './events/events.module';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 import { UserModule } from './proxies/user/user.module';
-import { ReservationModule } from './proxies/reservation/reservation.module';
-import { PaymentModule } from './proxies/payment/payment.module';
-import { ReportModule } from './proxies/report/report.module';
+import { ChatProxyModule } from './proxies/chat/chat.proxy.module';
 
 @Module({
   imports: [
@@ -26,9 +24,7 @@ import { ReportModule } from './proxies/report/report.module';
     RedisModule,
     EventsModule,
     UserModule,
-    ReservationModule,
-    PaymentModule,
-    ReportModule,
+    ChatProxyModule,
   ],
   controllers: [],
   providers: [

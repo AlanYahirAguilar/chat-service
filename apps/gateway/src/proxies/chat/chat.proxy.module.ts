@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { PaymentController } from './payment.controller';
+import { ChatController } from './chat.controller';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
@@ -9,15 +9,14 @@ import { AuthModule } from '../auth/auth.module';
     AuthModule,
     ClientsModule.registerAsync([
       {
-        name: 'PAYMENT_SERVICE',
+        name: 'USER_SERVICE',
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host:
-              configService.get<string>('PAYMENT_SERVICE_HOST') || 'localhost',
+            host: configService.get<string>('USER_SERVICE_HOST') || 'localhost',
             port: parseInt(
-              configService.get<string>('PAYMENT_SERVICE_PORT') || '4007',
+              configService.get<string>('USER_SERVICE_PORT') || '4002',
               10,
             ),
           },
@@ -26,6 +25,6 @@ import { AuthModule } from '../auth/auth.module';
       },
     ]),
   ],
-  controllers: [PaymentController],
+  controllers: [ChatController],
 })
-export class PaymentModule {}
+export class ChatProxyModule {}
