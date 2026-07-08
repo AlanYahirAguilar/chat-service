@@ -5,6 +5,7 @@ const typeOrmConfig = TypeOrmModule.forRootAsync({
   imports: [ConfigModule],
   useFactory: (configService: ConfigService) => ({
     type: 'mysql',
+    connectorPackage: 'mysql2', // usa mysql2 en local (caching_sha2); cae a 'mysql' si no está instalado (prod)
     host: configService.get<string>('DB_HOST'),
     port: parseInt(configService.get<string>('DB_PORT') || '3306', 10),
     username: configService.get<string>('DB_USERNAME'),

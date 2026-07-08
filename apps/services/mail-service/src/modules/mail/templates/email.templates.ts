@@ -1,3 +1,22 @@
+/**
+ * Envoltura HTML para un correo redactado por la IA.
+ * Convierte los saltos de línea del cuerpo en <br> para preservar el formato.
+ */
+export const generatedMessageTemplate = (body: string) => {
+  const safeBody = (body || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>');
+  return `
+<div style="font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 24px; border: 1px solid #ddd; border-radius: 10px; background-color: #fff;">
+  <div style="font-size: 16px; color: #333;">
+    ${safeBody}
+  </div>
+</div>
+`;
+};
+
 export const sendTestNotificationMessage = () => `
 <div style="font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #fff;">
   <div style="background-color: #4a6da7; padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">

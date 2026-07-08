@@ -17,4 +17,15 @@ export class MailController {
         : 'Failed to send test email',
     };
   }
+
+  @MessagePattern({ cmd: 'sendMail' })
+  async sendMail(
+    @Payload() data: { to: string; subject: string; body: string },
+  ) {
+    return await this.mailService.sendGeneratedMail({
+      to: data.to,
+      subject: data.subject,
+      body: data.body,
+    });
+  }
 }

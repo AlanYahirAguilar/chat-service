@@ -2,7 +2,10 @@ import { Logger } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { sendTestNotificationMessage } from './templates/email.templates';
+import {
+  sendTestNotificationMessage,
+  generatedMessageTemplate,
+} from './templates/email.templates';
 import { stringConstants } from '@syncslot/shared';
 import { CustomLoggerService } from '@syncslot/shared';
 @Injectable()
@@ -34,6 +37,34 @@ export class MailService {
       throw error;
     }
   }
+  /**
+   * Envía un correo generado por la IA. Recibe el cuerpo en texto plano
+   * (redactado con el tono del contacto) y lo envuelve en una plantilla HTML.
+   */
+  async sendGeneratedMail(options: {
+    to: string;
+    subject: string;
+    body: string;
+  }): Promise<{ success: boolean; error?: string }> {
+    try {
+      this.logger.log(`Enviando correo generado a ${options.to}`, 'EMAIL');
+      await this.mailerService.sendMail({
+        to: options.to,
+        subject: options.subject || 'Nuevo mensaje',
+        html: generatedMessageTemplate(options.body),
+      });
+      this.logger.log(`Correo enviado exitosamente a ${options.to}`, 'EMAIL');
+      return { success: true };
+    } catch (error) {
+      this.logger.error(
+        `[MailService_sendGeneratedMail] ${error.message}`,
+        error.stack,
+        'EXCEPTION',
+      );
+      return { success: false, error: error.message };
+    }
+  }
+
   // Método para verificar la configuración del sistema de correo
   async testConnection(email: string): Promise<boolean> {
     try {

@@ -1,7 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { create, Client } from '@open-wa/wa-automate';
+import { create, Client, ev } from '@open-wa/wa-automate';
+import { writeFileSync } from 'fs';
 import { CustomLoggerService } from '@syncslot/shared';
 import { MessageResult, MessageError } from './model/send.message.dto';
 
@@ -17,17 +18,37 @@ export class WhatsappService implements OnModuleInit {
     await this.initializeConnection();
   }
 
+  private qrListenerReady = false;
+
+  private setupQrCapture() {
+    if (this.qrListenerReady) return;
+    this.qrListenerReady = true;
+    // Guarda el QR como imagen PNG escaneable cada vez que OpenWA lo emite
+    ev.on('qr.**', (qrcode: string) => {
+      try {
+        const b64 = qrcode.replace(/^data:image\/png;base64,/, '');
+        const outPath = 'C:/Users/Admin/Desktop/wa-qr.png';
+        writeFileSync(outPath, b64, 'base64');
+        this.logger.log(`📲 QR de WhatsApp guardado en ${outPath} — escanéalo con WhatsApp > Dispositivos vinculados`, 'WHATSAPP');
+      } catch (e) {
+        this.logger.error(`No se pudo guardar el QR: ${(e as Error).message}`, undefined, 'WHATSAPP');
+      }
+    });
+  }
+
   private async initializeConnection() {
     try {
       if (this.connectionStatus !== 'disconnected') {
         return;
       }
       this.connectionStatus = 'connecting';
-      this.logger.log('Iniciando cliente de OpenWA. Escanea el código QR en la consola si se solicita...', 'WHATSAPP');
+      this.setupQrCapture();
+      this.logger.log('Iniciando cliente de OpenWA (Chrome). Se guardará el QR como imagen si se solicita...', 'WHATSAPP');
 
       this.client = await create({
         sessionId: 'chat_service',
-        authTimeout: 60,
+        useChrome: true,
+        authTimeout: 0,
         blockCrashLogs: true,
         disableSpins: true,
         headless: true,

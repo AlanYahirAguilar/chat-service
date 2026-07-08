@@ -21,13 +21,15 @@ export class MessageDispatcherService {
     private readonly logger: CustomLoggerService,
   ) {}
 
-  async dispatchMessage(contactId: string, prompt: string) {
+  async dispatchMessage(userId: bigint, contactId: string, prompt: string) {
     this.logger.log(`Iniciando orquestación de mensaje para contacto ${contactId}`, 'DISPATCHER');
-    
-    // 1. Buscar contacto
-    const contact = await this.contactRepository.findOne({ where: { id: contactId } });
+
+    // 1. Buscar contacto validando que pertenezca al usuario autenticado
+    const contact = await this.contactRepository.findOne({
+      where: { id: contactId as unknown as bigint, user: { id: userId } },
+    });
     if (!contact) {
-      throw new RpcException('El contacto especificado no existe.');
+      throw new RpcException('El contacto no existe o no pertenece al usuario.');
     }
 
     // 2. Crear historial PENDING
@@ -42,10 +44,14 @@ export class MessageDispatcherService {
       // 3. Generar texto con Gemini (ia-service)
       this.logger.log(`Solicitando redacción a Gemini con tono [${contact.tone}]`, 'DISPATCHER');
       const iaResponse = await firstValueFrom(
-        this.iaServiceClient.send({ cmd: 'generateMessage' }, { prompt, tone: contact.tone })
+        this.iaServiceClient.send(
+          { cmd: 'generateMessage' },
+          { prompt, tone: contact.tone, channel: contact.platform },
+        ),
       );
 
       const generatedMessage = iaResponse.message;
+      const generatedSubject = iaResponse.subject;
       if (!generatedMessage) {
         throw new Error('La IA no generó ningún mensaje.');
       }
@@ -68,6 +74,7 @@ export class MessageDispatcherService {
         dispatchResult = await firstValueFrom(
           this.mailServiceClient.send({ cmd: 'sendMail' }, {
             to: contact.contactInfo,
+            subject: generatedSubject || 'Nuevo mensaje',
             body: generatedMessage,
           })
         );

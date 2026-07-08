@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Base } from '@syncslot/shared';
-import { Column, Entity, Index, OneToMany } from 'typeorm';
+import { Column, Entity, Index, OneToMany, Relation } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { ContactEntity } from './contact.entity';
 
@@ -92,5 +92,5 @@ export class UserEntity extends Base {
   status: 'ACTIVE' | 'INACTIVE';
 
   @OneToMany(() => ContactEntity, (contact) => contact.user)
-  contacts: ContactEntity[];
+  contacts: Relation<ContactEntity>[];
 }

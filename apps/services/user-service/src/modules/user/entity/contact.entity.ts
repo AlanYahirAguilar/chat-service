@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Base } from '@syncslot/shared';
-import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, JoinColumn, Relation } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 export enum ContactPlatform {
@@ -53,5 +53,5 @@ export class ContactEntity extends Base {
 
   @ManyToOne(() => UserEntity, (user) => user.contacts)
   @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  user: Relation<UserEntity>;
 }

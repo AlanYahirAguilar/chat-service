@@ -6,7 +6,6 @@ temp/
 tmp/
 tests/
 scripts/
-
 # Logs
 logs
 *.log
@@ -15,7 +14,6 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-
 # dotenv environment variable files
 .env
 .env.development
@@ -23,18 +21,20 @@ lerna-debug.log*
 .env.production
 *.env
 .env*
-
 # temp directory
 .temp
 .tmp
-
 # session directory
 auth_info_baileys/
-
 reports/
 **/agents/
 **/.agents/
 **/.claude/
-
 modules.txt*
 .aider*
+
+# managed
+**.data.json
+**.node-persist**
+**_IGNORE_**
+# end managed

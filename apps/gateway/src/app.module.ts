@@ -12,6 +12,7 @@ import { EventsModule } from './events/events.module';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 import { UserModule } from './proxies/user/user.module';
 import { ChatProxyModule } from './proxies/chat/chat.proxy.module';
+import { ContactProxyModule } from './proxies/contact/contact.proxy.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ChatProxyModule } from './proxies/chat/chat.proxy.module';
     EventsModule,
     UserModule,
     ChatProxyModule,
+    ContactProxyModule,
   ],
   controllers: [],
   providers: [

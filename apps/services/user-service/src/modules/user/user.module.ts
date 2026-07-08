@@ -8,11 +8,13 @@ import { MessageHistoryEntity } from './entity/message-history.entity';
 import { UserSubscriber } from './user.subscriber';
 import { MessageDispatcherService } from './message-dispatcher.service';
 import { MessageDispatcherController } from './message-dispatcher.controller';
+import { ContactController } from './contact.controller';
+import { ContactService } from './contact.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, ContactEntity, MessageHistoryEntity])],
-  controllers: [UserController, MessageDispatcherController],
-  providers: [UserService, UserSubscriber, MessageDispatcherService],
-  exports: [UserService, MessageDispatcherService],
+  controllers: [UserController, MessageDispatcherController, ContactController],
+  providers: [UserService, UserSubscriber, MessageDispatcherService, ContactService],
+  exports: [UserService, MessageDispatcherService, ContactService],
 })
 export class UserModule {}

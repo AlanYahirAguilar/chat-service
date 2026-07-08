@@ -64,15 +64,33 @@ export class IaService {
   }
 
   /**
-   * Genera el texto final de un mensaje aplicando un tono específico
-   * (Basado en la instrucción cURL usando fetch HTTP)
+   * Genera el texto final de un mensaje aplicando un tono específico.
+   * El usuario solo expresa el INTENT (ej: "dile que mañana hay reunión a las 9");
+   * la IA autocompleta la redacción con el TONO registrado del contacto.
+   * Para el canal MAIL además genera un asunto (subject).
    */
-  async generateMessage(dto: GenerateMessageDto): Promise<{ message: string }> {
+  async generateMessage(
+    dto: GenerateMessageDto,
+  ): Promise<{ message: string; subject: string | null }> {
     try {
-      this.logger.log(`Generando mensaje. Tono: [${dto.tone}]`, 'IA');
+      const isMail = dto.channel === 'MAIL';
+      this.logger.log(
+        `Generando mensaje. Tono: [${dto.tone}] Canal: [${dto.channel || 'GENERICO'}]`,
+        'IA',
+      );
 
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`;
-      const systemPrompt = `Actúa como un asistente virtual redactando mensajes. Redacta el mensaje basándote en la ORDEN y aplica este TONO. Responde SOLO con el texto final, sin explicaciones ni saludos propios de la IA.\nORDEN: ${dto.prompt}\nTONO: ${dto.tone}`;
+
+      const systemPrompt = isMail
+        ? `Actúa como un asistente que redacta CORREOS ELECTRÓNICOS. A partir de la ORDEN del usuario (que solo expresa la intención), redacta un correo completo aplicando el TONO indicado. Devuelve EXCLUSIVAMENTE un objeto JSON válido con las claves "subject" (asunto breve y claro) y "body" (cuerpo del correo, sin la línea de asunto). No incluyas explicaciones ni markdown.\nORDEN: ${dto.prompt}\nTONO: ${dto.tone}`
+        : `Actúa como un asistente virtual redactando mensajes. Redacta el mensaje basándote en la ORDEN y aplica este TONO. Responde SOLO con el texto final, sin explicaciones ni saludos propios de la IA.\nORDEN: ${dto.prompt}\nTONO: ${dto.tone}`;
+
+      const body: Record<string, unknown> = {
+        contents: [{ parts: [{ text: systemPrompt }] }],
+      };
+      if (isMail) {
+        body.generationConfig = { responseMimeType: 'application/json' };
+      }
 
       const response = await fetch(url, {
         method: 'POST',
@@ -80,13 +98,7 @@ export class IaService {
           'Content-Type': 'application/json',
           'X-goog-api-key': this.apiKey,
         },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: systemPrompt }],
-            },
-          ],
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
@@ -94,14 +106,21 @@ export class IaService {
       }
 
       const data = await response.json();
-      const finalMessage =
-        data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-      if (!finalMessage) {
+      if (!rawText) {
         throw new Error('La API de Gemini no retornó contenido válido.');
       }
 
-      return { message: finalMessage.trim() };
+      if (isMail) {
+        const parsed = this.parseMailJson(rawText);
+        return {
+          subject: parsed.subject,
+          message: parsed.body,
+        };
+      }
+
+      return { message: rawText.trim(), subject: null };
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -112,6 +131,38 @@ export class IaService {
         'IA',
       );
       throw new RpcException('Error generando el mensaje. Intenta más tarde.');
+    }
+  }
+
+  /**
+   * Parsea la respuesta JSON de Gemini para correos de forma tolerante:
+   * limpia posibles bloques de código markdown y provee valores por defecto.
+   */
+  private parseMailJson(raw: string): { subject: string; body: string } {
+    const cleaned = raw
+      .trim()
+      .replace(/^```(?:json)?/i, '')
+      .replace(/```$/i, '')
+      .trim();
+
+    try {
+      const obj = JSON.parse(cleaned);
+      const subject =
+        typeof obj.subject === 'string' && obj.subject.trim()
+          ? obj.subject.trim()
+          : 'Nuevo mensaje';
+      const bodyText =
+        typeof obj.body === 'string' && obj.body.trim()
+          ? obj.body.trim()
+          : cleaned;
+      return { subject, body: bodyText };
+    } catch {
+      this.logger.error(
+        '[parseMailJson] No se pudo parsear el JSON del correo, usando texto plano.',
+        undefined,
+        'IA',
+      );
+      return { subject: 'Nuevo mensaje', body: raw.trim() };
     }
   }
 }

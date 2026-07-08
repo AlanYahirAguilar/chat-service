@@ -7,7 +7,13 @@ export class MessageDispatcherController {
   constructor(private readonly dispatcherService: MessageDispatcherService) {}
 
   @MessagePattern({ cmd: 'dispatchMessage' })
-  async dispatchMessage(@Payload() payload: { contactId: string; prompt: string }) {
-    return await this.dispatcherService.dispatchMessage(payload.contactId, payload.prompt);
+  async dispatchMessage(
+    @Payload() payload: { userId: bigint; contactId: string; prompt: string },
+  ) {
+    return await this.dispatcherService.dispatchMessage(
+      payload.userId,
+      payload.contactId,
+      payload.prompt,
+    );
   }
 }
