@@ -6,8 +6,19 @@ temp/
 tmp/
 #tests/
 scripts/
+# … pero los scripts de inicialización de BD SÍ van al repo
+# (db:create-prod los necesita compilados en la imagen de producción)
+!apps/**/src/scripts/
+!apps/**/src/scripts/**
+
+# Next.js / frontend
+.next/
+out/
+*.tsbuildinfo
+
 # Logs
 logs
+.logs/
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -21,6 +32,9 @@ lerna-debug.log*
 .env.production
 *.env
 .env*
+# … pero las plantillas de variables SÍ van al repo
+!.env.example
+!**/.env.example
 # temp directory
 .temp
 .tmp/
