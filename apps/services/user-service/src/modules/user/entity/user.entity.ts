@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Base } from '@syncslot/shared';
-import { Column, Entity, Index } from 'typeorm';
+import { Column, Entity, Index, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { ContactEntity } from './contact.entity';
 
 @Index('email', ['email'], { unique: true })
 @Index('phone_number', ['phoneNumber'], { unique: true })
@@ -89,4 +90,7 @@ export class UserEntity extends Base {
   })
   @ApiProperty({ example: 'ACTIVE', enum: ['ACTIVE', 'INACTIVE'] })
   status: 'ACTIVE' | 'INACTIVE';
+
+  @OneToMany(() => ContactEntity, (contact) => contact.user)
+  contacts: ContactEntity[];
 }

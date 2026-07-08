@@ -52,6 +52,36 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         }),
         inject: [ConfigService],
       },
+      {
+        name: 'IA_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get<string>('IA_SERVICE_HOST') || 'localhost',
+            port: parseInt(
+              configService.get<string>('IA_SERVICE_PORT') || '4004',
+              10,
+            ),
+          },
+        }),
+        inject: [ConfigService],
+      },
+      {
+        name: 'TELEGRAM_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get<string>('TELEGRAM_SERVICE_HOST') || 'localhost',
+            port: parseInt(
+              configService.get<string>('TELEGRAM_SERVICE_PORT') || '4006',
+              10,
+            ),
+          },
+        }),
+        inject: [ConfigService],
+      },
     ]),
   ],
   exports: [ClientsModule],
