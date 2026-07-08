@@ -1,0 +1,258 @@
+version: '3.8'
+
+x-common-env: &common-env
+  NODE_OPTIONS: "--max-old-space-size=60"
+  USER_SERVICE_HOST: "user-service"
+  AUTH_SERVICE_HOST: "auth-service"
+  IA_SERVICE_HOST: "ia-service"
+  MAIL_SERVICE_HOST: "mail-service"
+  MEDIA_SERVICE_HOST: "media-service"
+  PAYMENT_SERVICE_HOST: "payment-service"
+  REDIS_SERVICE_HOST: "redis-service"
+  REPORT_SERVICE_HOST: "report-service"
+  RESERVATION_SERVICE_HOST: "reservation-service"
+  WHATSAPP_SERVICE_HOST: "whatsapp-service"
+
+services:
+
+  # --- MICROSERVICIOS DE DOMINIO ---
+
+  user-service:
+    build:
+      context: .
+      dockerfile: apps/services/user-service/Dockerfile
+    image: registry.rous-portal.online/service-syncslot-user-service:latest
+    container_name: syncslot-user-service
+    env_file:
+      - .env
+    networks:
+      - coolify
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+        reservations:
+          memory: 30M
+    environment:
+      <<: *common-env
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: apps/services/auth-service/Dockerfile
+    image: registry.rous-portal.online/service-syncslot-auth-service:latest
+    container_name: syncslot-auth-service
+    env_file:
+      - .env
+    networks:
+      - coolify
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+        reservations:
+          memory: 30M
+    environment:
+      <<: *common-env
+
+  ia-service:
+    build:
+      context: .
+      dockerfile: apps/services/ia-service/Dockerfile
+    image: registry.rous-portal.online/service-syncslot-ia-service:latest
+    container_name: syncslot-ia-service
+    env_file:
+      - .env
+    networks:
+      - coolify
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+        reservations:
+          memory: 30M
+    environment:
+      <<: *common-env
+
+  mail-service:
+    build:
+      context: .
+      dockerfile: apps/services/mail-service/Dockerfile
+    image: registry.rous-portal.online/service-syncslot-mail-service:latest
+    container_name: syncslot-mail-service
+    env_file:
+      - .env
+    networks:
+      - coolify
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+        reservations:
+          memory: 30M
+    environment:
+      <<: *common-env
+
+  media-service:
+    build:
+      context: .
+      dockerfile: apps/services/media-service/Dockerfile
+    image: registry.rous-portal.online/service-syncslot-media-service:latest
+    container_name: syncslot-media-service
+    env_file:
+      - .env
+    networks:
+      - coolify
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+        reservations:
+          memory: 30M
+    environment:
+      <<: *common-env
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: apps/services/payment-service/Dockerfile
+    image: registry.rous-portal.online/service-syncslot-payment-service:latest
+    container_name: syncslot-payment-service
+    env_file:
+      - .env
+    depends_on:
+      - reservation-service
+    networks:
+      - coolify
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+        reservations:
+          memory: 30M
+    environment:
+      <<: *common-env
+
+  redis-service:
+    build:
+      context: .
+      dockerfile: apps/services/redis-service/Dockerfile
+    image: registry.rous-portal.online/service-syncslot-redis-service:latest
+    container_name: syncslot-redis-service
+    env_file:
+      - .env
+    networks:
+      - coolify
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+        reservations:
+          memory: 30M
+    environment:
+      <<: *common-env
+
+  report-service:
+    build:
+      context: .
+      dockerfile: apps/services/report-service/Dockerfile
+    image: registry.rous-portal.online/service-syncslot-report-service:latest
+    container_name: syncslot-report-service
+    env_file:
+      - .env
+    depends_on:
+      - reservation-service
+    networks:
+      - coolify
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+        reservations:
+          memory: 30M
+    environment:
+      <<: *common-env
+
+  reservation-service:
+    build:
+      context: .
+      dockerfile: apps/services/reservation-service/Dockerfile
+    image: registry.rous-portal.online/service-syncslot-reservation-service:latest
+    container_name: syncslot-reservation-service
+    env_file:
+      - .env
+    networks:
+      - coolify
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+        reservations:
+          memory: 30M
+    environment:
+      <<: *common-env
+
+  whatsapp-service:
+    build:
+      context: .
+      dockerfile: apps/services/whatsapp-service/Dockerfile
+    image: registry.rous-portal.online/service-syncslot-whatsapp-service:latest
+    container_name: syncslot-whatsapp-service
+    env_file:
+      - .env
+    volumes:
+      - whatsapp_session:/app/auth_info_baileys
+    networks:
+      - coolify
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+        reservations:
+          memory: 30M
+    environment:
+      <<: *common-env
+
+  # --- GATEWAY PRINCIPAL ---
+
+  gateway:
+    build:
+      context: .
+      dockerfile: apps/gateway/Dockerfile
+    image: registry.rous-portal.online/service-syncslot-gateway:latest
+    container_name: syncslot-gateway
+    env_file:
+      - .env
+    depends_on:
+      - user-service
+      - auth-service
+      - ia-service
+      - mail-service
+      - media-service
+      - payment-service
+      - redis-service
+      - report-service
+      - reservation-service
+      - whatsapp-service
+    ports:
+      - "4001:4001"
+    volumes:
+      - gateway_whatsapp_session:/app/auth_info_baileys
+    networks:
+      - coolify
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+        reservations:
+          memory: 30M
+    environment:
+      <<: *common-env
+
+volumes:
+  gateway_whatsapp_session:
+  whatsapp_session:
+
+networks:
+  coolify:
+    external: true

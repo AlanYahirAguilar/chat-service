@@ -1,0 +1,33 @@
+import { SeedDataSource } from './data-source.seed';
+import { IamSeeder } from './seeders/01.iam.seeder';
+import ThemeSeeder from './seeders/06.theme.seeder';
+
+async function runSeeds(): Promise<void> {
+  console.log('🌱 Initializing auth-service seed runner...\n');
+
+  const dataSource = await SeedDataSource.initialize();
+  console.log('✓ Database connection established\n');
+
+  try {
+    const seeders = [
+      new IamSeeder(),
+      new ThemeSeeder(),
+    ];
+
+    for (const seeder of seeders) {
+      console.log(`▶  Running: ${seeder.constructor.name}`);
+      await seeder.run(dataSource);
+      console.log(`✓  Completed: ${seeder.constructor.name}\n`);
+    }
+
+    console.log('✅  All seeds completed successfully!');
+  } catch (error) {
+    console.error('\n❌  Seed failed:', error);
+    process.exit(1);
+  } finally {
+    await dataSource.destroy();
+    console.log('\nDatabase connection closed.');
+  }
+}
+
+runSeeds();

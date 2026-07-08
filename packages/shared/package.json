@@ -1,0 +1,21 @@
+{
+    "name": "@syncslot/shared",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@nestjs/common": "11.0.1",
+        "typeorm": "0.3.29",
+        "@nestjs/swagger": "*",
+        "class-transformer": "*",
+        "class-validator": "*",
+        "bcryptjs": "*"
+    },
+    "devDependencies": {
+        "typescript": "5.7.3",
+        "@types/node": "*"
+    }
+}

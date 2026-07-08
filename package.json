@@ -1,0 +1,44 @@
+{
+    "name": "syncslot-monorepo",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "npm-i": "npm cache clean --force && npm install --workspaces",
+        "dev": "npm run start:dev --workspaces",
+        "build": "npm run build --workspaces",
+        "test": "npm run test --workspaces",
+        "docker:up": "docker-compose up --build -d",
+        "docker:down": "docker-compose down",
+        "docker:logs": "docker-compose logs -f",
+        "docker:build-and-push": "node scripts/build-and-push.js",
+        "deploy": "git push origin main && ssh -i C:\\Users\\palma\\.ssh\\build-server_key.pem -o StrictHostKeyChecking=no azureuser@20.98.66.189 \"/home/azureuser/remote-build.sh\""
+    },
+    "devDependencies": {
+        "@swc/cli": "0.8.1",
+        "@swc/core": "1.15.43",
+        "typescript": "5.7.3"
+    },
+    "workspaces": [
+        "apps/gateway",
+        "apps/services/*",
+        "packages/*"
+    ],
+    "dependencies": {
+        "@nestjs/common": "11.0.1",
+        "@nestjs/core": "11.0.1",
+        "@nestjs/event-emitter": "3.1.0",
+        "@nestjs/microservices": "11.0.1",
+        "@nestjs/typeorm": "11.0.1",
+        "typeorm": "0.3.29"
+    },
+    "overrides": {
+        "rxjs": "7.8.1",
+        "@nestjs/common": "11.0.1",
+        "@nestjs/core": "11.0.1",
+        "@nestjs/event-emitter": "3.1.0",
+        "@nestjs/microservices": "11.0.1",
+        "@nestjs/typeorm": "11.0.1",
+        "typeorm": "0.3.29"
+    }
+}
+

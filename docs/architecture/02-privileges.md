@@ -1,0 +1,1 @@
+# Privilegios Dinámicos por Rol
