@@ -5,8 +5,14 @@
     "scripts": {
         "npm-i": "npm cache clean --force && npm install --workspaces",
         "dev": "concurrently \"npm run start:dev -w apps/gateway\" \"npm run start:dev -w apps/services/auth-service\" \"npm run start:dev -w apps/services/ia-service\" \"npm run start:dev -w apps/services/user-service\" \"npm run start:dev -w apps/services/whatsapp-service\" \"npm run start:dev -w apps/services/mail-service\" \"npm run start:dev -w apps/services/telegram-service\" \"npm run start:dev -w apps/services/redis-service\"",
-        "build": "npm run build --workspaces",
-        "test": "npm run test --workspaces",
+        "build": "npm run build --workspaces --if-present",
+        "test": "npm run test --workspaces --if-present",
+        "web:dev": "concurrently \"npm run dev -w shell\" \"npm run dev -w dashboard\" \"npm run dev -w contacts\" \"npm run dev -w composer\"",
+        "web:dev:shell": "npm run dev -w shell",
+        "web:dev:dashboard": "npm run dev -w dashboard",
+        "web:dev:contacts": "npm run dev -w contacts",
+        "web:dev:composer": "npm run dev -w composer",
+        "web:build": "npm run build -w dashboard && npm run build -w contacts && npm run build -w composer && npm run build -w shell",
         "docker:up": "docker-compose up --build -d",
         "docker:down": "docker-compose down",
         "docker:logs": "docker-compose logs -f",
@@ -22,6 +28,7 @@
     "workspaces": [
         "apps/gateway",
         "apps/services/*",
+        "apps/web/*",
         "packages/*"
     ],
     "dependencies": {

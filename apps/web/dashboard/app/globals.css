@@ -1,0 +1,7 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '../../../../packages/ui/src/tokens.css';
+
+/* Escanea también las clases usadas por el design system compartido. */
+@source '../../../../packages/ui/src';
+@source '../src';

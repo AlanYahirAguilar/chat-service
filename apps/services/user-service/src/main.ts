@@ -10,19 +10,22 @@ async function bootstrap() {
   });
   const configService = app.get(ConfigService);
 
+  // Railway inyecta PORT; en local se usa USER_SERVICE_PORT o el default.
   const port = parseInt(
-    configService.get<string>('USER_SERVICE_PORT', '4002'),
+    process.env.PORT ?? configService.get<string>('USER_SERVICE_PORT', '4002'),
     10,
   );
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.TCP,
     options: {
-      host: '0.0.0.0',
+      // En Railway la red privada es IPv6: definir HOST='::'
+      host: process.env.HOST ?? '0.0.0.0',
       port: port,
     },
   });
 
+  app.enableShutdownHooks();
   await app.startAllMicroservices();
   await app.init();
 

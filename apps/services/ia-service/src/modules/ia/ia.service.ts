@@ -79,10 +79,10 @@ export class IaService {
         'IA',
       );
 
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.defaultModel}:generateContent`;
 
-      const signaturePrompt = dto.userName 
-        ? `\nAl final del mensaje, debes incluir obligatoriamente la firma: "— Mensaje enviado por ${dto.userName}${dto.userEmail ? ` (Correo: ${dto.userEmail}` : ''}${dto.userPhone ? `, Tel: ${dto.userPhone}` : ''}${dto.userEmail || dto.userPhone ? ')' : ''}".` 
+      const signaturePrompt = dto.userName
+        ? `\nAl final del mensaje, debes incluir obligatoriamente la firma: "— Mensaje enviado por ${dto.userName}${dto.userEmail ? ` (Correo: ${dto.userEmail}` : ''}${dto.userPhone ? `, Tel: ${dto.userPhone}` : ''}${dto.userEmail || dto.userPhone ? ')' : ''}".`
         : '';
 
       const systemPrompt = isMail
@@ -170,10 +170,10 @@ export class IaService {
       const subjectMatch = cleaned.match(/"subject"\s*:\s*"([^"]+)"/i);
       // Extrae desde el inicio del body hasta la última comilla antes de la llave, o hasta el final si faltó la llave
       const bodyMatch = cleaned.match(/"body"\s*:\s*"([\s\S]*?)"(?:\s*}|\s*$)/i);
-      
+
       const subject = subjectMatch ? subjectMatch[1].replace(/\\n/g, '').trim() : 'Nuevo mensaje';
       let body = bodyMatch ? bodyMatch[1] : cleaned;
-      
+
       // Si el regex estricto falló, intentar extraer todo lo que sigue después de "body": "
       if (!bodyMatch) {
         const startIdx = cleaned.indexOf('"body"');
@@ -193,7 +193,7 @@ export class IaService {
 
       // Limpiar escapes de JSON
       body = body.replace(/\\n/g, '\n').replace(/\\"/g, '"').trim();
-      
+
       return { subject, body };
     }
   }

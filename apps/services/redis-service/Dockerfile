@@ -1,56 +1,61 @@
-# Etapa 1: Dependencias y Construcción
+# syntax=docker/dockerfile:1
+# ─────────────────────────────────────────────────────────────
+# apps/services/redis-service — build multi-stage para monorepo npm workspaces
+# Contexto de build: RAÍZ del monorepo.
+#   docker build -f apps/services/redis-service/Dockerfile .
+# ─────────────────────────────────────────────────────────────
+
+# Etapa 1: dependencias + compilación
 FROM node:22-alpine AS builder
 WORKDIR /app
 
-# Copiamos archivos de la raíz del monorepo para iniciar
-COPY package*.json ./
+# Manifests de todos los workspaces (necesarios para que npm ci
+# resuelva el árbol completo del lockfile)
+COPY package.json package-lock.json ./
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/ui/package.json ./packages/ui/
+COPY apps/gateway/package.json ./apps/gateway/
+COPY apps/services/auth-service/package.json ./apps/services/auth-service/
+COPY apps/services/ia-service/package.json ./apps/services/ia-service/
+COPY apps/services/mail-service/package.json ./apps/services/mail-service/
+COPY apps/services/redis-service/package.json ./apps/services/redis-service/
+COPY apps/services/telegram-service/package.json ./apps/services/telegram-service/
+COPY apps/services/user-service/package.json ./apps/services/user-service/
+COPY apps/services/whatsapp-service/package.json ./apps/services/whatsapp-service/
+COPY apps/web/shell/package.json ./apps/web/shell/
+COPY apps/web/dashboard/package.json ./apps/web/dashboard/
+COPY apps/web/contacts/package.json ./apps/web/contacts/
+COPY apps/web/composer/package.json ./apps/web/composer/
 
-# Copiamos package.json de los paquetes para resolver workspaces de NPM
-COPY packages/shared/package*.json ./packages/shared/
-COPY apps/gateway/package*.json ./apps/gateway/
-COPY apps/services/user-service/package*.json ./apps/services/user-service/
-COPY apps/services/auth-service/package*.json ./apps/services/auth-service/
-COPY apps/services/ia-service/package*.json ./apps/services/ia-service/
-COPY apps/services/mail-service/package*.json ./apps/services/mail-service/
-COPY apps/services/media-service/package*.json ./apps/services/media-service/
-COPY apps/services/payment-service/package*.json ./apps/services/payment-service/
-COPY apps/services/redis-service/package*.json ./apps/services/redis-service/
-COPY apps/services/report-service/package*.json ./apps/services/report-service/
-COPY apps/services/reservation-service/package*.json ./apps/services/reservation-service/
-COPY apps/services/whatsapp-service/package*.json ./apps/services/whatsapp-service/
-
-# Instalamos dependencias en la raíz
+# Instala TODO el árbol una sola vez (capa cacheada mientras no cambien los manifests)
 RUN npm ci
 
-# Copiamos el resto del monorepo
+# Código fuente (filtrado por .dockerignore)
 COPY . .
 
-# Limitamos memoria para el build si es necesario
 ENV NODE_OPTIONS="--max-old-space-size=512"
 
-# Compilamos todos los workspaces del monorepo
-RUN npm run build
+# Compila SOLO la librería compartida y esta app
+RUN npm run build -w packages/shared -w apps/services/redis-service
 
-# Etapa 2: Producción (Runner)
+# Deja únicamente dependencias de producción
+RUN npm prune --omit=dev
+
+# Etapa 2: runtime mínimo
 FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Copiamos package.json mínimos para resoluciones
-COPY package*.json ./
-COPY apps/services/redis-service/package*.json ./apps/services/redis-service/
-COPY packages/shared/package*.json ./packages/shared/
-
-# Copiamos node_modules de producción y dist de la compilación anterior
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/packages/shared/package.json ./packages/shared/package.json
+COPY --from=builder /app/apps/services/redis-service/package.json ./apps/services/redis-service/package.json
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/services/redis-service/dist ./apps/services/redis-service/dist
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
+COPY --from=builder /app/apps/services/redis-service/dist ./apps/services/redis-service/dist
 
 USER node
 
-# El puerto del microservicio TCP
+# Puerto por defecto en local; Railway inyecta PORT en runtime
 EXPOSE 4008
 
-# Comando para iniciar la aplicación corriendo db:init-prod y levantando el servidor
-CMD ["npm", "run", "start:prod", "--workspace=apps/services/redis-service"]
-
+CMD ["node", "apps/services/redis-service/dist/main"]

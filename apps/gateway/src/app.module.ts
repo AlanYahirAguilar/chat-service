@@ -13,6 +13,7 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
 import { UserModule } from './proxies/user/user.module';
 import { ChatProxyModule } from './proxies/chat/chat.proxy.module';
 import { ContactProxyModule } from './proxies/contact/contact.proxy.module';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { ContactProxyModule } from './proxies/contact/contact.proxy.module';
     ChatProxyModule,
     ContactProxyModule,
   ],
-  controllers: [],
+  controllers: [HealthController],
   providers: [
     {
       provide: APP_GUARD,

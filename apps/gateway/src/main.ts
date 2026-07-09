@@ -46,7 +46,11 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  await app.listen(parseInt(process.env.APP_PORT ?? '4001'));
+  // Cierre limpio ante SIGTERM/SIGINT (Railway envía SIGTERM al redeplegar)
+  app.enableShutdownHooks();
+
+  // Railway inyecta PORT; en local se usa APP_PORT o el default.
+  await app.listen(parseInt(process.env.PORT ?? process.env.APP_PORT ?? '4001'));
 }
 
 bootstrap();
